@@ -10,6 +10,7 @@ $ns flush-trace
 close $nf
 close $nd
 exec nam prog1.nam &
+exec awk -f 1.awk prog1.tr &
 exit 0
 }
 
@@ -17,8 +18,9 @@ set n0 [$ns node]
 set n1 [$ns node]
 set n2 [$ns node]
 
-$ns duplex-link $n0 $n1 1Mb 10ms DropTail
-$ns duplex-link $n1 $n2 512Kb 10ms DropTail
+$ns duplex-link $n0 $n1 1Mb 10ms DropTail  
+#change this for xgraph vs no. of packets recieved
+$ns duplex-link $n1 $n2 756Kb 10ms DropTail 
 $ns queue-limit $n1 $n2 5
 
 set udp0 [new Agent/UDP]

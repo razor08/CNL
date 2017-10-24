@@ -1,13 +1,13 @@
 BEGIN {
-count=0;
+	count=0;
 }
 {
-event=$1;
-if(event=="d")
-{
-count++;
-}
+	event=$1;
+	if(event=="d")
+	{
+		count++;
+	}
 }
 END {
-printf("No of packets dropped : %d\n",count);
+	printf("No of packets dropped : %d\n",count);
 }

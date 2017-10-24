@@ -1,29 +1,21 @@
-#Lan simulation – mac.tcl
-
 set ns [new Simulator]
+set nf [open prog5.nam w]
+$ns namtrace-all $nf
+set nd [open prog5.tr w]
+$ns trace-all $nd
 
+proc finish { } {
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam prog5.nam &
+exec awk -f 5.awk prog5.tr &
+exit 0
+}
 #define color for data flows
 $ns color 1 Blue
 $ns color 2 Red
-
-#open tracefile
-set tracefile1 [open ex4.tr w]
-$ns trace-all $tracefile1
-
-#open nam file
-set namfile [open ex4.nam w]
-$ns namtrace-all $namfile
-
-#define the finish procedure
-proc finish {} {
-global ns tracefile1 namfile
-
-$ns flush-trace
-close $tracefile1
-close $namfile
-exec nam ex4.nam &
-exit 0
-}
 
 #create six nodes
 set n0 [$ns node]
@@ -44,8 +36,8 @@ $n4 color Blue
 #create links between the nodes
 $ns duplex-link $n0 $n2 2Mb 10ms DropTail
 $ns duplex-link $n1 $n2 2Mb 10ms DropTail
-$ns simplex-lgnk $n2 $n3 0.3Mb 100ms DropTail
-$ns simplex-link $n3 $n2 0.3Mb 100ms DropTail
+$ns simplex-link $n2 $n3 0.3Mb 100ms DropTail #change this for xgraph vs no. of packets dropped
+$ns simplex-link $n3 $n2 0.3Mb 100ms DropTail #change this for xgraph vs no. of packets dropped
 
 # Create a LAN
 set lan [$ns newLan "$n3 $n4 $n5" 0.5Mb 40ms LL Queue/DropTail MAC/Csma/Cd Channel]
@@ -64,9 +56,8 @@ $ns attach-agent $n4 $sink
 $ns connect $tcp $sink
 $tcp set fid_ 1
 $tcp set packet_size_ 552
-
+ 
 #set ftp over tcp connection
-
 set ftp [new Application/FTP]
 $ftp attach-agent $tcp
 
@@ -86,7 +77,8 @@ $cbr set packet_size_ 1000
 $cbr set rate_ 0.05Mb
 $cbr set random_ false
 
-#scheduling the events$ns at 0.0 "$n0 label TCP_Traffic"
+#scheduling the events
+$ns at 0.0 "$n0 label TCP_Traffic"
 $ns at 0.0 "$n1 label UDP_Traffic"
 $ns at 0.3 "$cbr start"
 $ns at 0.8 "$ftp start"
