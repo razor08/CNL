@@ -1,11 +1,15 @@
 BEGIN {
-pktdrp=0;
+	count=0;
 }
+
 {
-event=$1;
-if(event == "d") {
-pktdrp++; }
+	event=$1;
+	if(event == "d") 
+	{
+		count++; 
+	}
 }
+
 END {
-printf("The number of packets dropped is %d\n",pktdrp);
+	printf("The number of packets dropped is %d\n",count);
 }
